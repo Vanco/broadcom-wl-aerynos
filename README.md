@@ -5,6 +5,10 @@
 Re-upload from the source code found on the [Broadcom Support and Downloads page][1]
 
 **Patched for Linux >= 6.12**
+
+> **Note**
+For AerynOS, checkout `aerynos` branch.
+
 # broadcom-wl-patched
 
 Tested on a BCM4360-based 802.11ac Wireless Network Adapter (TP-LINK Archer T8E)
@@ -79,4 +83,3 @@ broadcom-wl, 6.30.223.271, 4.7.6-200.x86_64, x86_64: installed
 [7]: https://salsa.debian.org/broadcom-sta-team/broadcom-sta
 [8]: http://download1.rpmfusion.org/nonfree/fedora/development/rawhide/Everything/x86_64/os/repoview/kmod-wl.html
 [9]: https://pkgs.rpmfusion.org/cgit/nonfree/wl-kmod.git/
-
