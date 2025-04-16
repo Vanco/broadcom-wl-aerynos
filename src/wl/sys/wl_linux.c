@@ -3,11 +3,11 @@
  * Broadcom 802.11abg Networking Device Driver
  *
  * Copyright (C) 2015, Broadcom Corporation. All Rights Reserved.
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -45,7 +45,7 @@
 #include <linux/completion.h>
 #include <linux/usb.h>
 #include <linux/pci_ids.h>
-#define WLC_MAXBSSCFG		1	
+#define WLC_MAXBSSCFG		1
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
 #include <asm/switch_to.h>
@@ -89,7 +89,7 @@ struct iw_statistics *wl_get_wireless_stats(struct net_device *dev);
 
 #if defined(USE_CFG80211)
 #include <wl_cfg80211_hybrid.h>
-#endif 
+#endif
 
 #include <wlc_wowl.h>
 
@@ -130,7 +130,7 @@ typedef struct priv_link {
 #ifdef WL_INFO
 #undef WL_INFO
 #endif
-#define WL_INFO(dev)	((wl_info_t*)(WL_DEV_IF(dev)->wl))	
+#define WL_INFO(dev)	((wl_info_t*)(WL_DEV_IF(dev)->wl))
 
 static int wl_open(struct net_device *dev);
 static int wl_close(struct net_device *dev);
@@ -182,7 +182,7 @@ static int msglevel2 = 0xdeadbeef;
 module_param(msglevel2, int, 0);
 static int phymsglevel = 0xdeadbeef;
 module_param(phymsglevel, int, 0);
-#endif 
+#endif
 
 #ifdef BCMDBG_ASSERT
 static int assert_type = 0xdeadbeef;
@@ -202,7 +202,7 @@ module_param(oneonly, int, 0);
 static int piomode = 0;
 module_param(piomode, int, 0);
 
-static int instance_base = 0; 
+static int instance_base = 0;
 module_param(instance_base, int, 0);
 
 #if defined(BCMDBG)
@@ -216,10 +216,10 @@ module_param(nompc, int, 0);
 
 #ifdef quote_str
 #undef quote_str
-#endif 
+#endif
 #ifdef to_str
 #undef to_str
-#endif 
+#endif
 #define to_str(s) #s
 #define quote_str(s) to_str(s)
 
@@ -249,7 +249,7 @@ static const u_int8_t brcm_oui[] =  {0x00, 0x10, 0x18};
 #define WL_RADIOTAP_F_NONHT_VHT_BW			0x02
 
 struct wl_radiotap_nonht_vht {
-	u_int8_t len;				
+	u_int8_t len;
 	u_int8_t flags;
 	u_int8_t bw;
 } __attribute__ ((packed));
@@ -353,28 +353,28 @@ typedef struct wl_radiotap_ht wl_radiotap_ht_t;
 
 struct wl_radiotap_vht {
 	struct ieee80211_radiotap_header ieee_radiotap;
-	uint32 tsft_l;			
-	uint32 tsft_h;			
-	u_int8_t flags;			
+	uint32 tsft_l;
+	uint32 tsft_h;
+	u_int8_t flags;
 	u_int8_t pad1;
-	u_int16_t channel_freq;		
-	u_int16_t channel_flags;	
-	u_int8_t signal;		
-	u_int8_t noise;			
-	u_int8_t antenna;		
+	u_int16_t channel_freq;
+	u_int16_t channel_flags;
+	u_int8_t signal;
+	u_int8_t noise;
+	u_int8_t antenna;
 	u_int8_t pad2;
 	u_int16_t pad3;
-	uint32 ampdu_ref_num;		
-	u_int16_t ampdu_flags;		
-	u_int8_t ampdu_delim_crc;	
+	uint32 ampdu_ref_num;
+	u_int16_t ampdu_flags;
+	u_int8_t ampdu_delim_crc;
 	u_int8_t ampdu_reserved;
-	u_int16_t vht_known;		
-	u_int8_t vht_flags;		
-	u_int8_t vht_bw;		
-	u_int8_t vht_mcs_nss[4];	
-	u_int8_t vht_coding;		
-	u_int8_t vht_group_id;		
-	u_int16_t vht_partial_aid;	
+	u_int16_t vht_known;
+	u_int8_t vht_flags;
+	u_int8_t vht_bw;
+	u_int8_t vht_mcs_nss[4];
+	u_int8_t vht_coding;
+	u_int8_t vht_group_id;
+	u_int16_t vht_partial_aid;
 } __attribute__ ((packed));
 
 typedef struct wl_radiotap_vht wl_radiotap_vht_t;
@@ -409,6 +409,7 @@ typedef struct wl_radiotap_vht wl_radiotap_vht_t;
 	 (1 << IEEE80211_RADIOTAP_ANTENNA) |		\
 	 (1 << IEEE80211_RADIOTAP_MCS))
 
+#ifndef __RADIOTAP_H
 #define WL_RADIOTAP_PRESENT_VHT			\
 	((1 << IEEE80211_RADIOTAP_TSFT) |		\
 	 (1 << IEEE80211_RADIOTAP_FLAGS) |		\
@@ -418,6 +419,17 @@ typedef struct wl_radiotap_vht wl_radiotap_vht_t;
 	 (1 << IEEE80211_RADIOTAP_ANTENNA) |		\
 	 (1 << IEEE80211_RADIOTAP_AMPDU) |		\
 	 (1 << IEEE80211_RADIOTAP_VHT))
+#else
+#define WL_RADIOTAP_PRESENT_VHT			\
+	((1 << IEEE80211_RADIOTAP_TSFT) |		\
+	 (1 << IEEE80211_RADIOTAP_FLAGS) |		\
+	 (1 << IEEE80211_RADIOTAP_CHANNEL) |		\
+	 (1 << IEEE80211_RADIOTAP_DBM_ANTSIGNAL) |	\
+	 (1 << IEEE80211_RADIOTAP_DBM_ANTNOISE) |	\
+	 (1 << IEEE80211_RADIOTAP_ANTENNA) |		\
+	 (1 << IEEE80211_RADIOTAP_AMPDU_STATUS) |		\
+	 (1 << IEEE80211_RADIOTAP_VHT))
+#endif // __RADIOTAP_H
 
 #ifndef ARPHRD_IEEE80211_RADIOTAP
 #define ARPHRD_IEEE80211_RADIOTAP 803
@@ -432,11 +444,11 @@ typedef struct wl_radiotap_vht wl_radiotap_vht_t;
 static struct ethtool_ops wl_ethtool_ops =
 #else
 static const struct ethtool_ops wl_ethtool_ops =
-#endif 
+#endif
 {
 	.get_drvinfo = wl_get_driver_info,
 };
-#endif 
+#endif
 
 #if defined(WL_USE_NETDEV_OPS)
 
@@ -461,7 +473,7 @@ static const struct net_device_ops wl_netdev_monitor_ops =
 	.ndo_get_stats = wl_get_stats,
 	.ndo_do_ioctl = wl_ioctl
 };
-#endif 
+#endif
 
 static void
 wl_if_setup(struct net_device *dev)
@@ -476,7 +488,7 @@ wl_if_setup(struct net_device *dev)
 	dev->set_mac_address = wl_set_mac_address;
 	dev->set_multicast_list = wl_set_multicast_list;
 	dev->do_ioctl = wl_ioctl;
-#endif 
+#endif
 
 #ifdef USE_IW
 #if WIRELESS_EXT < 19
@@ -485,7 +497,7 @@ wl_if_setup(struct net_device *dev)
 #if WIRELESS_EXT > 12
 	dev->wireless_handlers = (struct iw_handler_def *) &wl_iw_handler_def;
 #endif
-#endif 
+#endif
 
 #if WIRELESS_EXT >= 19 || LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 29)
 	dev->ethtool_ops = &wl_ethtool_ops;
@@ -628,7 +640,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 	wlc_iovar_setint(wl->wlc, "qtxpower", 23 * 4);
 
 #ifdef BCMDBG
-	if (macaddr != NULL) { 
+	if (macaddr != NULL) {
 		int dbg_err;
 
 		WL_ERROR(("wl%d: setting MAC ADDRESS %s\n", unit, macaddr));
@@ -639,7 +651,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 		if (dbg_err)
 			WL_ERROR(("wl%d: Error setting MAC ADDRESS\n", unit));
 	}
-#endif 
+#endif
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 17, 0)
 	bcopy(&wl->pub->cur_etheraddr, dev->dev_addr, ETHER_ADDR_LEN);
 #else
@@ -687,7 +699,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 		if (pci_dev != NULL)
 			SET_NETDEV_DEV(dev, &pci_dev->dev);
 	}
-#endif 
+#endif
 
 	if (register_netdev(dev)) {
 		WL_ERROR(("wl%d: register_netdev() failed\n", unit));
@@ -696,7 +708,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 	wlif->dev_registed = TRUE;
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 14)
-#endif 
+#endif
 #ifdef USE_IW
 	wlif->iw.wlinfo = (void *)wl;
 #endif
@@ -739,7 +751,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 
 #ifdef BCMDBG
 	printf(" (Compiled in " SRCBASE);
-#endif 
+#endif
 	printf("\n");
 
 	wl_found++;
@@ -853,7 +865,7 @@ wl_resume(struct device *dev)
 
 	WL_ERROR(("%s: PCI Resume handler\n", __FUNCTION__));
 	if (WLOFFLD_ENAB(wl->pub)) {
-		wlc_iovar_setint(wl->wlc, "wowl_activate", 0); 
+		wlc_iovar_setint(wl->wlc, "wowl_activate", 0);
 		wlc_wowl_wake_reason_process(wl->wlc);
 
 		if (WOWL_ACTIVE(wl->pub)) {
@@ -908,7 +920,7 @@ static struct pci_driver wl_pci_driver __refdata = {
 #else
 	.suspend =      wl_suspend,
 	.resume =       wl_resume,
-#endif 
+#endif
 };
 
 static int __init
@@ -945,7 +957,7 @@ wl_module_init(void)
 		}
 		printf("%s: phymsglevel set to 0x%x\n", __FUNCTION__, phyhal_msg_level);
 	}
-#endif 
+#endif
 
 	{
 		const char *var = getvar(NULL, "wl_dispatch_mode");
@@ -959,7 +971,7 @@ wl_module_init(void)
 
 	if (assert_type != 0xdeadbeef)
 		g_assert_type = assert_type;
-#endif 
+#endif
 
 	{
 		char *var = getvar(NULL, "wl_txq_thresh");
@@ -1054,7 +1066,7 @@ wl_free(wl_info_t *wl)
 	}
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 14)
-#endif 
+#endif
 
 	wl_txq_free(wl);
 
@@ -1070,7 +1082,7 @@ wl_free(wl_info_t *wl)
 #ifdef BCMDBG_MEM
 
 	MALLOC_DUMP(osh, NULL);
-#endif 
+#endif
 
 	osl_detach(osh);
 }
@@ -1291,7 +1303,7 @@ wl_free_if(wl_info_t *wl, wl_if_t *wlif)
 #else
 		free_netdev(wlif->dev);
 		wlif->dev = NULL;
-#endif 
+#endif
 	}
 
 	MFREE(wl->osh, wlif, sizeof(wl_if_t));
@@ -1345,7 +1357,7 @@ wl_alloc_linux_if(wl_if_t *wlif)
 			(wl->pub)?wl->pub->unit:wlif->subunit, __FUNCTION__));
 		return NULL;
 	}
-#endif 
+#endif
 
 	priv_link->wlif = wlif;
 	wlif->dev = dev;
@@ -1643,7 +1655,7 @@ wl_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
 
 		return wl_iw_ioctl(dev, ifr, cmd);
 	}
-#endif 
+#endif
 
 	if (cmd == SIOCETHTOOL)
 		return (wl_ethtool(wl, (void*)ifr->ifr_data, wlif));
@@ -1804,7 +1816,7 @@ wl_get_wireless_stats(struct net_device *dev)
 	wstats->discard.misc = wstats_watchdog->discard.misc;
 
 	wstats->miss.beacon = 0;
-#endif 
+#endif
 
 	if (AP_ENAB(wl->pub))
 		rssi = 0;
@@ -1838,11 +1850,11 @@ wl_get_wireless_stats(struct net_device *dev)
 	wstats->qual.updated |= (IW_QUAL_ALL_UPDATED | IW_QUAL_DBM);
 #else
 	wstats->qual.updated |= 7;
-#endif 
+#endif
 
 	return wstats;
 }
-#endif 
+#endif
 
 static int
 wl_set_mac_address(struct net_device *dev, void *addr)
@@ -1937,7 +1949,7 @@ _wl_set_multicast_list(struct net_device *dev)
 			}
 			bcopy(ha->addr, &maclist->ea[i++], ETHER_ADDR_LEN);
 		}
-#endif 
+#endif
 		maclist->count = i;
 
 		WL_LOCK(wl);
@@ -1961,7 +1973,7 @@ wl_isr(int irq, void *dev_id)
 #else
 irqreturn_t BCMFASTPATH
 wl_isr(int irq, void *dev_id, struct pt_regs *ptregs)
-#endif 
+#endif
 {
 	wl_info_t *wl;
 	bool ours, wantdpc;
@@ -2148,7 +2160,7 @@ wl_dump(wl_info_t *wl, struct bcmstrbuf *b)
 
 	return 0;
 }
-#endif 
+#endif
 
 static void
 wl_link_up(wl_info_t *wl, char *ifname)
@@ -2167,7 +2179,7 @@ wl_event(wl_info_t *wl, char *ifname, wlc_event_t *e)
 {
 #ifdef USE_IW
 	wl_iw_event(wl->dev, &(e->event), e->data);
-#endif 
+#endif
 
 #if defined(USE_CFG80211)
 	wl_cfg80211_event(wl->dev, &(e->event), e->data);
@@ -2197,7 +2209,7 @@ wl_event(wl_info_t *wl, char *ifname, wlc_event_t *e)
 #else
 	case WLC_E_RADIO:
 		break;
-#endif 
+#endif
 	}
 }
 
@@ -2590,7 +2602,7 @@ wl_monitor(wl_info_t *wl, wl_rxsts_t *rxsts, void *p)
 		phdr->rssi.did = WL_MON_FRAME_RSSI;
 		phdr->rssi.status = P80211ITEM_OK;
 		phdr->rssi.len = 4;
-		phdr->rssi.data = rxsts->signal;		
+		phdr->rssi.data = rxsts->signal;
 
 		phdr->sq.did = WL_MON_FRAME_SQ;
 		phdr->sq.status = P80211ITEM_OK;
@@ -3060,7 +3072,7 @@ _wl_add_monitor_if(wl_task_t *task)
 	dev->hard_start_xmit = wl_monitor_start;
 	dev->do_ioctl = wl_ioctl;
 	dev->get_stats = wl_get_stats;
-#endif 
+#endif
 
 	if (register_netdev(dev)) {
 		WL_ERROR(("wl%d: %s, register_netdev failed for %s\n",
@@ -3140,7 +3152,7 @@ print_tainted()
 {
 	return "";
 }
-#endif 
+#endif
 
 struct net_device *
 wl_netdev_get(wl_info_t *wl)
@@ -3170,7 +3182,7 @@ wl_buf_to_pktcopy(osl_t *osh, void *p, uchar *buf, int len, uint offset)
 	return len;
 }
 
-#if defined(WL_CONFIG_RFKILL)     
+#if defined(WL_CONFIG_RFKILL)
 
 static int
 wl_set_radio_block(void *data, bool blocked)
@@ -3251,7 +3263,7 @@ wl_report_radio_state(wl_info_t *wl)
 	rfkill_set_hw_state(wl->wl_rfkill.rfkill, wl->last_phyind != 0);
 }
 
-#endif 
+#endif
 
 static int
 wl_linux_watchdog(void *ctx)
@@ -3307,16 +3319,16 @@ wl_linux_watchdog(void *ctx)
 					wstats->discard.misc = WLCNTVAL(wl->pub->_cnt->rxrunt) +
 						WLCNTVAL(wl->pub->_cnt->rxgiant);
 					wstats->miss.beacon = 0;
-#endif 
+#endif
 				}
-#endif 
+#endif
 
 				wlif->stats_id = id;
 			}
 #ifdef USE_IW
 			if (!wlc_get(wl->wlc, WLC_GET_PHY_NOISE, &phy_noise))
 				wlif->phy_noise = phy_noise;
-#endif 
+#endif
 
 		}
 	}
@@ -3349,8 +3361,8 @@ wl_proc_read(struct file *filp, char __user *buffer, size_t length, loff_t *offp
 		return 0;
 	}
 #else
-	if (*offp > 0) { 
-		return 0; 
+	if (*offp > 0) {
+		return 0;
 	}
 #endif
 

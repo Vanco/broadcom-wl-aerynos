@@ -3,11 +3,11 @@
  * cfg80211 interface
  *
  * Copyright (C) 2015, Broadcom Corporation. All Rights Reserved.
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -252,7 +252,7 @@ static s8 wl_dbg_estr[][WL_DBG_ESTR_MAX] = {
 	"IF",
 	"RSSI", "PFN_SCAN_COMPLETE", "ACTION_FRAME", "ACTION_FRAME_COMPLETE",
 };
-#endif				
+#endif
 
 #define CHAN2G(_channel, _freq, _flags) {			\
 	.band			= IEEE80211_BAND_2GHZ,		\
@@ -560,10 +560,10 @@ wl_cfg80211_scan(struct wiphy *wiphy,
 	s32 passive_scan;
 	s32 err = 0;
 
-	if (request) {		
+	if (request) {
 		ssids = request->ssids;
 	}
-	else {		
+	else {
 
 		ssids = NULL;
 	}
@@ -1304,7 +1304,7 @@ wl_cfg80211_add_key(struct wiphy *wiphy, struct net_device *dev,
 		memcpy(&key.data[16], keybuf, sizeof(keybuf));
 	}
 
-	if (params->seq_len) { 
+	if (params->seq_len) {
 		u8 *ivptr;
 		if (params->seq_len != 6) {
 			WL_ERR(("seq_len %d is unexpected, check implementation.\n",
@@ -1643,7 +1643,7 @@ wl_cfg80211_flush_pmksa(struct wiphy *wiphy, struct net_device *dev)
 
 }
 
-#endif  
+#endif
 
 #ifdef CONFIG_PM
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 39)
@@ -1694,7 +1694,7 @@ wl_wowl_ind_wake_reason(struct wl_cfg80211_priv *wl, struct cfg80211_wowlan_wake
 	}
 	return 1;
 }
-#endif 
+#endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 1, 0)
 static int
@@ -1725,7 +1725,7 @@ wl_cfg80211_rekey(struct wiphy *wiphy, struct net_device *ndev,
 	}
 	return err;
 }
-#endif 
+#endif
 
 static int wl_cfg80211_suspend(struct wiphy *wiphy, struct cfg80211_wowlan *wowlan)
 {
@@ -1763,7 +1763,7 @@ static int wl_cfg80211_suspend(struct wiphy *wiphy, struct cfg80211_wowlan *wowl
 		WL_INF(("Requesting wake on 4way handshake request\n"));
 		wowl |= WL_WOWL_M1;
 	}
-#endif 
+#endif
 
 	wowl |= WL_WOWL_KEYROT;
 
@@ -1774,12 +1774,12 @@ static int wl_cfg80211_suspend(struct wiphy *wiphy, struct cfg80211_wowlan *wowl
 
 	return err;
 }
-#else 
+#else
 static int wl_cfg80211_suspend(struct wiphy *wiphy)
 {
 	return 0;
 }
-#endif 
+#endif
 
 static int wl_cfg80211_resume(struct wiphy *wiphy)
 {
@@ -1796,16 +1796,16 @@ static int wl_cfg80211_resume(struct wiphy *wiphy)
 
 	result = wl_wowl_ind_wake_reason(wl, &wakeup);
 	switch (result) {
-		case -1: 
+		case -1:
 			break;
-		case 0:	
+		case 0:
 			cfg80211_report_wowlan_wakeup(wl_to_wdev(wl), NULL, GFP_KERNEL);
 			break;
-		case 1: 
+		case 1:
 			cfg80211_report_wowlan_wakeup(wl_to_wdev(wl), &wakeup, GFP_KERNEL);
 			break;
 	}
-#endif 
+#endif
 
 	err = wl_dev_bufvar_get(wl_to_ndev(wl), "wowl_replay", (s8 *)rekey,
 		sizeof(wlc_rekey_info_t));
@@ -1818,10 +1818,10 @@ static int wl_cfg80211_resume(struct wiphy *wiphy)
 		cfg80211_gtk_rekey_notify(wl_to_ndev(wl), (u8 *)&wl->bssid.octet,
 			rekey->replay_counter, GFP_KERNEL);
 	}
-#endif 
+#endif
 	return 0;
 }
-#endif 
+#endif
 
 static struct cfg80211_ops wl_cfg80211_ops = {
 	.change_virtual_intf = wl_cfg80211_change_iface,
@@ -1844,8 +1844,8 @@ static struct cfg80211_ops wl_cfg80211_ops = {
 	.resume = wl_cfg80211_resume,
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 1, 0)
 	.set_rekey_data = wl_cfg80211_rekey,
-#endif 
-#endif 
+#endif
+#endif
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 33)
 	.set_pmksa = wl_cfg80211_set_pmksa,
 	.del_pmksa = wl_cfg80211_del_pmksa,
@@ -1859,7 +1859,7 @@ static struct cfg80211_ops wl_cfg80211_ops = {
 static const struct wiphy_wowlan_support wl_wowlan_support = {
 #else
 static struct wiphy_wowlan_support wl_wowlan_support = {
-#endif 
+#endif
 	.flags = WIPHY_WOWLAN_MAGIC_PKT
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 1, 0)
 	| WIPHY_WOWLAN_SUPPORTS_GTK_REKEY | WIPHY_WOWLAN_GTK_REKEY_FAILURE |
@@ -1867,8 +1867,8 @@ static struct wiphy_wowlan_support wl_wowlan_support = {
 #endif
 	| WIPHY_WOWLAN_DISCONNECT,
 };
-#endif 
-#endif 
+#endif
+#endif
 
 static s32 wl_mode_to_nl80211_iftype(s32 mode)
 {
@@ -1910,7 +1910,7 @@ static s32 wl_alloc_wdev(struct device *dev, struct wireless_dev **rwdev)
 #endif
 	wdev->wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) | BIT(NL80211_IFTYPE_ADHOC);
 	wdev->wiphy->bands[IEEE80211_BAND_2GHZ] = &__wl_band_2ghz;
-	wdev->wiphy->bands[IEEE80211_BAND_5GHZ] = &__wl_band_5ghz_a; 
+	wdev->wiphy->bands[IEEE80211_BAND_5GHZ] = &__wl_band_5ghz_a;
 	wdev->wiphy->signal_type = CFG80211_SIGNAL_TYPE_MBM;
 	wdev->wiphy->cipher_suites = __wl_cipher_suites;
 	wdev->wiphy->n_cipher_suites = ARRAY_SIZE(__wl_cipher_suites);
@@ -1925,9 +1925,9 @@ static s32 wl_alloc_wdev(struct device *dev, struct wireless_dev **rwdev)
 	wdev->wiphy->wowlan = &wl_wowlan_support;
 #else
 	wdev->wiphy->wowlan = wl_wowlan_support;
-#endif 
-#endif 
-#endif 
+#endif
+#endif
+#endif
 
 	err = wiphy_register(wdev->wiphy);
 	if (err < 0) {
@@ -1965,7 +1965,7 @@ static void wl_free_wdev(struct wl_cfg80211_priv *wl)
 
 static s32 wl_inform_bss(struct wl_cfg80211_priv *wl, struct wl_scan_results *bss_list)
 {
-	struct wl_bss_info *bi = NULL;	
+	struct wl_bss_info *bi = NULL;
 	s32 err = 0;
 	int i;
 
@@ -2117,7 +2117,7 @@ wl_notify_connect_status(struct wl_cfg80211_priv *wl, struct net_device *ndev,
 	struct wiphy *wiphy;
 	u32 chanspec, chan;
 	u32 freq, band;
-#endif 
+#endif
 
 	WL_DBG(("\n"));
 
@@ -2448,7 +2448,7 @@ wl_bss_roaming_done(struct wl_cfg80211_priv *wl, struct net_device *ndev,
 			&roam_info,
 #else
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 39)
-			&wl->conf->channel,	 
+			&wl->conf->channel,
 #endif
 			(u8 *)&wl->bssid,
 			conn_info->req_ie, conn_info->req_ie_len,
@@ -2832,7 +2832,7 @@ wl_cfg80211_event(struct net_device *ndev, const wl_event_msg_t * e, void *data)
 	s8 *estr = (event_type <= sizeof(wl_dbg_estr) / WL_DBG_ESTR_MAX - 1) ?
 	    wl_dbg_estr[event_type] : (s8 *) "Unknown";
 	WL_DBG(("event_type (%d):" "WLC_E_" "%s\n", event_type, estr));
-#endif				
+#endif
 	if (!wl_enq_event(wl, event_type, e, data))
 		wl_wakeup_event(wl);
 }
@@ -2959,10 +2959,10 @@ static void wl_update_wowl(struct net_device *ndev)
 		wdev->wiphy->wowlan = NULL;
 #else
 		memset(&wdev->wiphy->wowlan, 0, sizeof(struct wiphy_wowlan_support));
-#endif 
-#endif 
+#endif
+#endif
 	}
-#endif 
+#endif
 }
 
 static s32 wl_update_wiphybands(struct wl_cfg80211_priv *wl)
@@ -2999,7 +2999,7 @@ s32 wl_cfg80211_up(struct net_device *ndev)
 	err = wl_update_wiphybands(wl);
 	if (err) {
 		return err;
-	} 
+	}
 
 	wl_update_wowl(ndev);
 	return 0;
@@ -3124,4 +3124,4 @@ static void wl_init_eq_lock(struct wl_cfg80211_priv *wl)
 	spin_lock_init(&wl->eq_lock);
 }
 
-#endif 
+#endif
