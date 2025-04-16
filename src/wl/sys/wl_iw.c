@@ -37,9 +37,7 @@ typedef const struct si_pub	si_t;
 
 #include <wl_dbg.h>
 #include <wl_iw.h>
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
 #include <wl_linux.h>
-#endif
 
 extern bool wl_iw_conn_status_str(uint32 event_type, uint32 status,
 	uint32 reason, char* stringBuf, uint buflen);
@@ -64,6 +62,9 @@ typedef struct priv_link {
 	wl_iw_t *wliw;
 } priv_link_t;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
+#define get_ds() (KERNEL_DS)
+#endif
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 24))
 #define WL_DEV_LINK(dev)       (priv_link_t*)(dev->priv)
 #else
@@ -106,33 +107,7 @@ dev_wlc_ioctl(
 	int len
 )
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0)
-	struct ifreq ifr;
-	wl_ioctl_t ioc;
-	mm_segment_t fs;
-	int ret;
-
-	memset(&ioc, 0, sizeof(ioc));
-	ioc.cmd = cmd;
-	ioc.buf = arg;
-	ioc.len = len;
-
-	strcpy(ifr.ifr_name, dev->name);
-	ifr.ifr_data = (caddr_t) &ioc;
-
-	fs = get_fs();
-	set_fs(get_ds());
-#if defined(WL_USE_NETDEV_OPS)
-	ret = dev->netdev_ops->ndo_do_ioctl(dev, &ifr, SIOCDEVPRIVATE);
-#else
-	ret = dev->do_ioctl(dev, &ifr, SIOCDEVPRIVATE);
-#endif
-	set_fs(fs);
-
-	return ret;
-#else
 	return wlc_ioctl_internal(dev, cmd, arg, len);
-#endif
 }
 
 static int
@@ -1903,7 +1878,7 @@ wl_iw_set_encodeext(
 #if WIRELESS_EXT > 17
 struct {
 	pmkid_list_t pmkids;
-	pmkid_t foo[MAXPMKID-1];
+	pmkid_t foo[MAXPMKID];
 } pmkid_list;
 static int
 wl_iw_set_pmksa(
@@ -1926,7 +1901,7 @@ wl_iw_set_pmksa(
 		bzero((char *)&pmkid_list, sizeof(pmkid_list));
 	}
 	if (iwpmksa->cmd == IW_PMKSA_REMOVE) {
-		pmkid_list_t pmkid, *pmkidptr;
+		struct { pmkid_t pmkid[1]; } pmkid, *pmkidptr;
 		pmkidptr = &pmkid;
 		bcopy(&iwpmksa->bssid.sa_data[0], &pmkidptr->pmkid[0].BSSID, ETHER_ADDR_LEN);
 		bcopy(&iwpmksa->pmkid[0], &pmkidptr->pmkid[0].PMKID, WPA2_PMKID_LEN);

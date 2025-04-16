@@ -48,10 +48,10 @@ typedef struct bcm_mem_link {
 struct osl_info {
 	osl_pubinfo_t pub;
 	uint magic;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
-	void *pdev;
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
 	struct pci_dev *pdev;
+#else
+	void *pdev;
 #endif
 	atomic_t malloced;
 	atomic_t pktalloced; 	
@@ -604,10 +604,10 @@ osl_dma_alloc_consistent(osl_t *osh, uint size, uint16 align_bits, uint *alloced
 	if (va)
 		*pap = (ulong)__virt_to_phys(va);
 #else
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
-	va = pci_alloc_consistent(osh->pdev, size, (dma_addr_t*)pap);
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
 	va = dma_alloc_coherent(&osh->pdev->dev, size, (dma_addr_t *)pap, GFP_ATOMIC);
+#else
+	va = pci_alloc_consistent(osh->pdev, size, (dma_addr_t*)pap);
 #endif
 #endif
 	return va;
@@ -621,10 +621,10 @@ osl_dma_free_consistent(osl_t *osh, void *va, uint size, ulong pa)
 #ifdef __ARM_ARCH_7A__
 	kfree(va);
 #else
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
-	pci_free_consistent(osh->pdev, size, va, (dma_addr_t)pa);
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
 	dma_free_coherent(&osh->pdev->dev, size, va, (dma_addr_t)pa);
+#else
+	pci_free_consistent(osh->pdev, size, va, (dma_addr_t)pa);
 #endif
 #endif
 }
@@ -635,10 +635,10 @@ osl_dma_map(osl_t *osh, void *va, uint size, int direction, void *p, hnddma_seg_
 	int dir;
 
 	ASSERT((osh && (osh->magic == OS_HANDLE_MAGIC)));
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
-	dir = (direction == DMA_TX)? PCI_DMA_TODEVICE: PCI_DMA_FROMDEVICE;
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
 	dir = (direction == DMA_TX)? DMA_TO_DEVICE : DMA_FROM_DEVICE;
+#else
+	dir = (direction == DMA_TX)? PCI_DMA_TODEVICE: PCI_DMA_FROMDEVICE;
 #endif
 
 #if defined(__ARM_ARCH_7A__) && defined(BCMDMASGLISTOSL)
@@ -651,20 +651,20 @@ osl_dma_map(osl_t *osh, void *va, uint size, int direction, void *p, hnddma_seg_
 			if (skb_is_nonlinear(skb)) {
 				nsegs = skb_to_sgvec(skb, sg, 0, PKTLEN(osh, skb));
 				ASSERT((nsegs > 0) && (totsegs + nsegs <= MAX_DMA_SEGS));
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
-				pci_map_sg(osh->pdev, sg, nsegs, dir);
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
 				dma_map_sg(&osh->pdev->dev, sg, nsegs, dir);
+#else
+				pci_map_sg(osh->pdev, sg, nsegs, dir);
 #endif
 			} else {
 				nsegs = 1;
 				ASSERT(totsegs + nsegs <= MAX_DMA_SEGS);
 				sg->page_link = 0;
 				sg_set_buf(sg, PKTDATA(osh, skb), PKTLEN(osh, skb));
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
-				pci_map_single(osh->pdev, PKTDATA(osh, skb), PKTLEN(osh, skb), dir);
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
 				dma_map_single(&osh->pdev->dev, PKTDATA(osh, skb), PKTLEN(osh, skb), dir);
+#else
+				pci_map_single(osh->pdev, PKTDATA(osh, skb), PKTLEN(osh, skb), dir);
 #endif
 			}
 			totsegs += nsegs;
@@ -680,10 +680,10 @@ osl_dma_map(osl_t *osh, void *va, uint size, int direction, void *p, hnddma_seg_
 	}
 #endif 
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
-	return (pci_map_single(osh->pdev, va, size, dir));
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
 	return (dma_map_single(&osh->pdev->dev, va, size, dir));
+#else
+	return (pci_map_single(osh->pdev, va, size, dir));
 #endif
 }
 
@@ -693,12 +693,12 @@ osl_dma_unmap(osl_t *osh, uint pa, uint size, int direction)
 	int dir;
 
 	ASSERT((osh && (osh->magic == OS_HANDLE_MAGIC)));
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
-	dir = (direction == DMA_TX)? PCI_DMA_TODEVICE: PCI_DMA_FROMDEVICE;
-	pci_unmap_single(osh->pdev, (uint32)pa, size, dir);
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
 	dir = (direction == DMA_TX)? DMA_TO_DEVICE : DMA_FROM_DEVICE;
 	dma_unmap_single(&osh->pdev->dev, (uint32)pa, size, dir);
+#else
+	dir = (direction == DMA_TX)? PCI_DMA_TODEVICE: PCI_DMA_FROMDEVICE;
+	pci_unmap_single(osh->pdev, (uint32)pa, size, dir);
 #endif
 }
 
@@ -979,11 +979,7 @@ osl_getcycles(void)
 void *
 osl_reg_map(uint32 pa, uint size)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 6, 0)
-	return (ioremap_nocache((unsigned long)pa, (unsigned long)size));
-#else
 	return (ioremap((unsigned long)pa, (unsigned long)size));
-#endif
 }
 
 void
@@ -1113,21 +1109,15 @@ osl_os_get_image_block(char *buf, int len, void *image)
 {
 	struct file *fp = (struct file *)image;
 	int rdlen;
-	loff_t pos;
 
 	if (!image)
 		return 0;
 
-	pos = fp->f_pos;
-	rdlen = kernel_read(fp,
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
-			pos,
-#endif
-			buf, len
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0)
-			,&pos
+	rdlen = kernel_read(fp, buf, len, &fp->f_pos);
+#else
+	rdlen = kernel_read(fp, fp->f_pos, buf, len);
 #endif
-	);
 	if (rdlen > 0)
 		fp->f_pos += rdlen;
 

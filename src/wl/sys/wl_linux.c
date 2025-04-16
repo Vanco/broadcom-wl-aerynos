@@ -3,11 +3,11 @@
  * Broadcom 802.11abg Networking Device Driver
  *
  * Copyright (C) 2015, Broadcom Corporation. All Rights Reserved.
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -45,7 +45,7 @@
 #include <linux/completion.h>
 #include <linux/usb.h>
 #include <linux/pci_ids.h>
-#define WLC_MAXBSSCFG		1
+#define WLC_MAXBSSCFG		1	
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
 #include <asm/switch_to.h>
@@ -56,7 +56,11 @@
 #include <asm/irq.h>
 #include <asm/pgtable.h>
 #include <asm/uaccess.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
 #include <linux/unaligned.h>
+#else
+#include <asm/unaligned.h>
+#endif
 
 #include <proto/802.1d.h>
 
@@ -89,7 +93,7 @@ struct iw_statistics *wl_get_wireless_stats(struct net_device *dev);
 
 #if defined(USE_CFG80211)
 #include <wl_cfg80211_hybrid.h>
-#endif
+#endif 
 
 #include <wlc_wowl.h>
 
@@ -130,7 +134,7 @@ typedef struct priv_link {
 #ifdef WL_INFO
 #undef WL_INFO
 #endif
-#define WL_INFO(dev)	((wl_info_t*)(WL_DEV_IF(dev)->wl))
+#define WL_INFO(dev)	((wl_info_t*)(WL_DEV_IF(dev)->wl))	
 
 static int wl_open(struct net_device *dev);
 static int wl_close(struct net_device *dev);
@@ -182,7 +186,7 @@ static int msglevel2 = 0xdeadbeef;
 module_param(msglevel2, int, 0);
 static int phymsglevel = 0xdeadbeef;
 module_param(phymsglevel, int, 0);
-#endif
+#endif 
 
 #ifdef BCMDBG_ASSERT
 static int assert_type = 0xdeadbeef;
@@ -202,7 +206,7 @@ module_param(oneonly, int, 0);
 static int piomode = 0;
 module_param(piomode, int, 0);
 
-static int instance_base = 0;
+static int instance_base = 0; 
 module_param(instance_base, int, 0);
 
 #if defined(BCMDBG)
@@ -216,10 +220,10 @@ module_param(nompc, int, 0);
 
 #ifdef quote_str
 #undef quote_str
-#endif
+#endif 
 #ifdef to_str
 #undef to_str
-#endif
+#endif 
 #define to_str(s) #s
 #define quote_str(s) to_str(s)
 
@@ -249,7 +253,7 @@ static const u_int8_t brcm_oui[] =  {0x00, 0x10, 0x18};
 #define WL_RADIOTAP_F_NONHT_VHT_BW			0x02
 
 struct wl_radiotap_nonht_vht {
-	u_int8_t len;
+	u_int8_t len;				
 	u_int8_t flags;
 	u_int8_t bw;
 } __attribute__ ((packed));
@@ -353,28 +357,28 @@ typedef struct wl_radiotap_ht wl_radiotap_ht_t;
 
 struct wl_radiotap_vht {
 	struct ieee80211_radiotap_header ieee_radiotap;
-	uint32 tsft_l;
-	uint32 tsft_h;
-	u_int8_t flags;
+	uint32 tsft_l;			
+	uint32 tsft_h;			
+	u_int8_t flags;			
 	u_int8_t pad1;
-	u_int16_t channel_freq;
-	u_int16_t channel_flags;
-	u_int8_t signal;
-	u_int8_t noise;
-	u_int8_t antenna;
+	u_int16_t channel_freq;		
+	u_int16_t channel_flags;	
+	u_int8_t signal;		
+	u_int8_t noise;			
+	u_int8_t antenna;		
 	u_int8_t pad2;
 	u_int16_t pad3;
-	uint32 ampdu_ref_num;
-	u_int16_t ampdu_flags;
-	u_int8_t ampdu_delim_crc;
+	uint32 ampdu_ref_num;		
+	u_int16_t ampdu_flags;		
+	u_int8_t ampdu_delim_crc;	
 	u_int8_t ampdu_reserved;
-	u_int16_t vht_known;
-	u_int8_t vht_flags;
-	u_int8_t vht_bw;
-	u_int8_t vht_mcs_nss[4];
-	u_int8_t vht_coding;
-	u_int8_t vht_group_id;
-	u_int16_t vht_partial_aid;
+	u_int16_t vht_known;		
+	u_int8_t vht_flags;		
+	u_int8_t vht_bw;		
+	u_int8_t vht_mcs_nss[4];	
+	u_int8_t vht_coding;		
+	u_int8_t vht_group_id;		
+	u_int16_t vht_partial_aid;	
 } __attribute__ ((packed));
 
 typedef struct wl_radiotap_vht wl_radiotap_vht_t;
@@ -409,7 +413,6 @@ typedef struct wl_radiotap_vht wl_radiotap_vht_t;
 	 (1 << IEEE80211_RADIOTAP_ANTENNA) |		\
 	 (1 << IEEE80211_RADIOTAP_MCS))
 
-#ifndef __RADIOTAP_H
 #define WL_RADIOTAP_PRESENT_VHT			\
 	((1 << IEEE80211_RADIOTAP_TSFT) |		\
 	 (1 << IEEE80211_RADIOTAP_FLAGS) |		\
@@ -419,17 +422,6 @@ typedef struct wl_radiotap_vht wl_radiotap_vht_t;
 	 (1 << IEEE80211_RADIOTAP_ANTENNA) |		\
 	 (1 << IEEE80211_RADIOTAP_AMPDU) |		\
 	 (1 << IEEE80211_RADIOTAP_VHT))
-#else
-#define WL_RADIOTAP_PRESENT_VHT			\
-	((1 << IEEE80211_RADIOTAP_TSFT) |		\
-	 (1 << IEEE80211_RADIOTAP_FLAGS) |		\
-	 (1 << IEEE80211_RADIOTAP_CHANNEL) |		\
-	 (1 << IEEE80211_RADIOTAP_DBM_ANTSIGNAL) |	\
-	 (1 << IEEE80211_RADIOTAP_DBM_ANTNOISE) |	\
-	 (1 << IEEE80211_RADIOTAP_ANTENNA) |		\
-	 (1 << IEEE80211_RADIOTAP_AMPDU_STATUS) |		\
-	 (1 << IEEE80211_RADIOTAP_VHT))
-#endif // __RADIOTAP_H
 
 #ifndef ARPHRD_IEEE80211_RADIOTAP
 #define ARPHRD_IEEE80211_RADIOTAP 803
@@ -444,11 +436,11 @@ typedef struct wl_radiotap_vht wl_radiotap_vht_t;
 static struct ethtool_ops wl_ethtool_ops =
 #else
 static const struct ethtool_ops wl_ethtool_ops =
-#endif
+#endif 
 {
 	.get_drvinfo = wl_get_driver_info,
 };
-#endif
+#endif 
 
 #if defined(WL_USE_NETDEV_OPS)
 
@@ -473,7 +465,7 @@ static const struct net_device_ops wl_netdev_monitor_ops =
 	.ndo_get_stats = wl_get_stats,
 	.ndo_do_ioctl = wl_ioctl
 };
-#endif
+#endif 
 
 static void
 wl_if_setup(struct net_device *dev)
@@ -488,7 +480,7 @@ wl_if_setup(struct net_device *dev)
 	dev->set_mac_address = wl_set_mac_address;
 	dev->set_multicast_list = wl_set_multicast_list;
 	dev->do_ioctl = wl_ioctl;
-#endif
+#endif 
 
 #ifdef USE_IW
 #if WIRELESS_EXT < 19
@@ -497,7 +489,7 @@ wl_if_setup(struct net_device *dev)
 #if WIRELESS_EXT > 12
 	dev->wireless_handlers = (struct iw_handler_def *) &wl_iw_handler_def;
 #endif
-#endif
+#endif 
 
 #if WIRELESS_EXT >= 19 || LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 29)
 	dev->ethtool_ops = &wl_ethtool_ops;
@@ -600,11 +592,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 	}
 	wl->bcm_bustype = bustype;
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 6, 0)
-	if ((wl->regsva = ioremap_nocache(dev->base_addr, PCI_BAR0_WINSZ)) == NULL) {
-#else
 	if ((wl->regsva = ioremap(dev->base_addr, PCI_BAR0_WINSZ)) == NULL) {
-#endif
 		WL_ERROR(("wl%d: ioremap() failed\n", unit));
 		goto fail;
 	}
@@ -640,7 +628,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 	wlc_iovar_setint(wl->wlc, "qtxpower", 23 * 4);
 
 #ifdef BCMDBG
-	if (macaddr != NULL) {
+	if (macaddr != NULL) { 
 		int dbg_err;
 
 		WL_ERROR(("wl%d: setting MAC ADDRESS %s\n", unit, macaddr));
@@ -651,11 +639,11 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 		if (dbg_err)
 			WL_ERROR(("wl%d: Error setting MAC ADDRESS\n", unit));
 	}
-#endif
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 17, 0)
+#endif 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 14, 0)
 	bcopy(&wl->pub->cur_etheraddr, dev->dev_addr, ETHER_ADDR_LEN);
 #else
-	dev_addr_mod(dev, 0, &wl->pub->cur_etheraddr, ETHER_ADDR_LEN);
+	eth_hw_addr_set(dev, wl->pub->cur_etheraddr.octet);
 #endif
 
 	online_cpus = 1;
@@ -699,7 +687,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 		if (pci_dev != NULL)
 			SET_NETDEV_DEV(dev, &pci_dev->dev);
 	}
-#endif
+#endif 
 
 	if (register_netdev(dev)) {
 		WL_ERROR(("wl%d: register_netdev() failed\n", unit));
@@ -708,7 +696,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 	wlif->dev_registed = TRUE;
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 14)
-#endif
+#endif 
 #ifdef USE_IW
 	wlif->iw.wlinfo = (void *)wl;
 #endif
@@ -750,8 +738,8 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 		WL_ALL_PASSIVE_ENAB(wl) ?  ", Passive Mode" : "", EPI_VERSION_STR);
 
 #ifdef BCMDBG
-	printf(" (Compiled in " SRCBASE);
-#endif
+	printf(" (Compiled in " SRCBASE " at " __TIME__ " on " __DATE__ ")");
+#endif 
 	printf("\n");
 
 	wl_found++;
@@ -798,11 +786,7 @@ wl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 	if ((val & 0x0000ff00) != 0)
 		pci_write_config_dword(pdev, 0x40, val & 0xffff00ff);
 	bar1_size = pci_resource_len(pdev, 2);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 6, 0)
-	bar1_addr = (uchar *)ioremap_nocache(pci_resource_start(pdev, 2),
-#else
 	bar1_addr = (uchar *)ioremap(pci_resource_start(pdev, 2),
-#endif
 		bar1_size);
 	wl = wl_attach(pdev->vendor, pdev->device, pci_resource_start(pdev, 0), PCI_BUS, pdev,
 		pdev->irq, bar1_addr, bar1_size);
@@ -865,7 +849,7 @@ wl_resume(struct device *dev)
 
 	WL_ERROR(("%s: PCI Resume handler\n", __FUNCTION__));
 	if (WLOFFLD_ENAB(wl->pub)) {
-		wlc_iovar_setint(wl->wlc, "wowl_activate", 0);
+		wlc_iovar_setint(wl->wlc, "wowl_activate", 0); 
 		wlc_wowl_wake_reason_process(wl->wlc);
 
 		if (WOWL_ACTIVE(wl->pub)) {
@@ -920,7 +904,7 @@ static struct pci_driver wl_pci_driver __refdata = {
 #else
 	.suspend =      wl_suspend,
 	.resume =       wl_resume,
-#endif
+#endif 
 };
 
 static int __init
@@ -957,7 +941,7 @@ wl_module_init(void)
 		}
 		printf("%s: phymsglevel set to 0x%x\n", __FUNCTION__, phyhal_msg_level);
 	}
-#endif
+#endif 
 
 	{
 		const char *var = getvar(NULL, "wl_dispatch_mode");
@@ -971,7 +955,7 @@ wl_module_init(void)
 
 	if (assert_type != 0xdeadbeef)
 		g_assert_type = assert_type;
-#endif
+#endif 
 
 	{
 		char *var = getvar(NULL, "wl_txq_thresh");
@@ -1066,7 +1050,7 @@ wl_free(wl_info_t *wl)
 	}
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 14)
-#endif
+#endif 
 
 	wl_txq_free(wl);
 
@@ -1082,7 +1066,7 @@ wl_free(wl_info_t *wl)
 #ifdef BCMDBG_MEM
 
 	MALLOC_DUMP(osh, NULL);
-#endif
+#endif 
 
 	osl_detach(osh);
 }
@@ -1110,8 +1094,9 @@ wl_open(struct net_device *dev)
 	}
 	WL_UNLOCK(wl);
 
-	if (!error)
+	if (!error) {
 		OLD_MOD_INC_USE_COUNT;
+	}
 
 #if defined(USE_CFG80211)
 	if (wl_cfg80211_up(dev)) {
@@ -1303,7 +1288,7 @@ wl_free_if(wl_info_t *wl, wl_if_t *wlif)
 #else
 		free_netdev(wlif->dev);
 		wlif->dev = NULL;
-#endif
+#endif 
 	}
 
 	MFREE(wl->osh, wlif, sizeof(wl_if_t));
@@ -1357,7 +1342,7 @@ wl_alloc_linux_if(wl_if_t *wlif)
 			(wl->pub)?wl->pub->unit:wlif->subunit, __FUNCTION__));
 		return NULL;
 	}
-#endif
+#endif 
 
 	priv_link->wlif = wlif;
 	wlif->dev = dev;
@@ -1655,7 +1640,7 @@ wl_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
 
 		return wl_iw_ioctl(dev, ifr, cmd);
 	}
-#endif
+#endif 
 
 	if (cmd == SIOCETHTOOL)
 		return (wl_ethtool(wl, (void*)ifr->ifr_data, wlif));
@@ -1673,18 +1658,7 @@ wl_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
 		goto done2;
 	}
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0)
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0)
-	if (segment_eq(get_fs(), KERNEL_DS))
-#else
-	if (uaccess_kernel())
-#endif
-		buf = ioc.buf;
-
-	else if (ioc.buf) {
-#else
 	if (ioc.buf) {
-#endif
 		if (!(buf = (void *) MALLOC(wl->osh, MAX(ioc.len, WLC_IOCTL_MAXLEN)))) {
 			bcmerror = BCME_NORESOURCE;
 			goto done2;
@@ -1697,15 +1671,15 @@ wl_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
 	}
 
 	WL_LOCK(wl);
-	bcmerror = wlc_ioctl(wl->wlc, ioc.cmd, buf, ioc.len, wlif->wlcif);
+	if (!capable(CAP_NET_ADMIN)) {
+		bcmerror = BCME_EPERM;
+	} else {
+		bcmerror = wlc_ioctl(wl->wlc, ioc.cmd, buf, ioc.len, wlif->wlcif);
+	}
 	WL_UNLOCK(wl);
 
 done1:
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0)
-	if (ioc.buf && (ioc.buf != buf)) {
-#else
 	if (ioc.buf) {
-#endif
 		if (copy_to_user(ioc.buf, buf, ioc.len))
 			bcmerror = BCME_BADADDR;
 		MFREE(wl->osh, buf, MAX(ioc.len, WLC_IOCTL_MAXLEN));
@@ -1816,7 +1790,7 @@ wl_get_wireless_stats(struct net_device *dev)
 	wstats->discard.misc = wstats_watchdog->discard.misc;
 
 	wstats->miss.beacon = 0;
-#endif
+#endif 
 
 	if (AP_ENAB(wl->pub))
 		rssi = 0;
@@ -1850,11 +1824,11 @@ wl_get_wireless_stats(struct net_device *dev)
 	wstats->qual.updated |= (IW_QUAL_ALL_UPDATED | IW_QUAL_DBM);
 #else
 	wstats->qual.updated |= 7;
-#endif
+#endif 
 
 	return wstats;
 }
-#endif
+#endif 
 
 static int
 wl_set_mac_address(struct net_device *dev, void *addr)
@@ -1871,19 +1845,21 @@ wl_set_mac_address(struct net_device *dev, void *addr)
 	WL_TRACE(("wl%d: wl_set_mac_address\n", wl->pub->unit));
 
 	WL_LOCK(wl);
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 17, 0)
-	bcopy(sa->sa_data, dev->dev_addr, ETHER_ADDR_LEN);
-#else
-	dev_addr_mod(dev, 0, sa->sa_data, ETHER_ADDR_LEN);
-#endif
 	err = wlc_iovar_op(wl->wlc, "cur_etheraddr", NULL, 0, sa->sa_data, ETHER_ADDR_LEN,
 		IOV_SET, (WL_DEV_IF(dev))->wlcif);
 	WL_UNLOCK(wl);
-	if (err)
+	if (err) {
 		WL_ERROR(("wl%d: wl_set_mac_address: error setting MAC addr override\n",
 			wl->pub->unit));
-	return err;
+		return OSL_ERROR(err);
+	} else {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 14, 0)
+		bcopy(sa->sa_data, dev->dev_addr, ETHER_ADDR_LEN);
+#else
+        eth_hw_addr_set(dev, sa->sa_data);
+#endif
+		return 0;
+	}
 }
 
 static void
@@ -1949,7 +1925,7 @@ _wl_set_multicast_list(struct net_device *dev)
 			}
 			bcopy(ha->addr, &maclist->ea[i++], ETHER_ADDR_LEN);
 		}
-#endif
+#endif 
 		maclist->count = i;
 
 		WL_LOCK(wl);
@@ -1973,7 +1949,7 @@ wl_isr(int irq, void *dev_id)
 #else
 irqreturn_t BCMFASTPATH
 wl_isr(int irq, void *dev_id, struct pt_regs *ptregs)
-#endif
+#endif 
 {
 	wl_info_t *wl;
 	bool ours, wantdpc;
@@ -2128,7 +2104,8 @@ wl_osl_pcie_rc(struct wl_info *wl, uint op, int param)
 void
 wl_dump_ver(wl_info_t *wl, struct bcmstrbuf *b)
 {
-	bcm_bprintf(b, "wl%d: version %s\n", wl->pub->unit, EPI_VERSION_STR);
+	bcm_bprintf(b, "wl%d: %s %s version %s\n", wl->pub->unit,
+		__DATE__, __TIME__, EPI_VERSION_STR);
 }
 
 #if defined(BCMDBG)
@@ -2160,7 +2137,7 @@ wl_dump(wl_info_t *wl, struct bcmstrbuf *b)
 
 	return 0;
 }
-#endif
+#endif 
 
 static void
 wl_link_up(wl_info_t *wl, char *ifname)
@@ -2179,7 +2156,7 @@ wl_event(wl_info_t *wl, char *ifname, wlc_event_t *e)
 {
 #ifdef USE_IW
 	wl_iw_event(wl->dev, &(e->event), e->data);
-#endif
+#endif 
 
 #if defined(USE_CFG80211)
 	wl_cfg80211_event(wl->dev, &(e->event), e->data);
@@ -2209,7 +2186,7 @@ wl_event(wl_info_t *wl, char *ifname, wlc_event_t *e)
 #else
 	case WLC_E_RADIO:
 		break;
-#endif
+#endif 
 	}
 }
 
@@ -2269,9 +2246,10 @@ wl_start(struct sk_buff *skb, struct net_device *dev)
 			if (!err) {
 				atomic_inc(&wl->callbacks);
 				wl->txq_dispatched = TRUE;
-			} else
+			} else {
 				WL_ERROR(("wl%d: wl_start/schedule_work failed\n",
 				          wl->pub->unit));
+			}
 		}
 
 		TXQ_UNLOCK(wl);
@@ -2602,7 +2580,7 @@ wl_monitor(wl_info_t *wl, wl_rxsts_t *rxsts, void *p)
 		phdr->rssi.did = WL_MON_FRAME_RSSI;
 		phdr->rssi.status = P80211ITEM_OK;
 		phdr->rssi.len = 4;
-		phdr->rssi.data = rxsts->signal;
+		phdr->rssi.data = rxsts->signal;		
 
 		phdr->sq.did = WL_MON_FRAME_SQ;
 		phdr->sq.status = P80211ITEM_OK;
@@ -3003,9 +2981,6 @@ wl_monitor(wl_info_t *wl, wl_rxsts_t *rxsts, void *p)
 	if (skb == NULL) return;
 
 	skb->dev = wl->monitor_dev;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)
-	skb->dev->last_rx = jiffies;
-#endif
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 22)
 	skb_reset_mac_header(skb);
 #else
@@ -3045,14 +3020,7 @@ _wl_add_monitor_if(wl_task_t *task)
 	}
 
 	ASSERT(strlen(wlif->name) > 0);
-#if __GNUC__ < 8
 	strncpy(wlif->dev->name, wlif->name, strlen(wlif->name));
-#else
-	// Should have been:
-	// strncpy(wlif->dev->name, wlif->name, sizeof(wlif->dev->name) - 1);
-	// wlif->dev->name[sizeof(wlif->dev->name) - 1] = '\0';
-	memcpy(wlif->dev->name, wlif->name, strlen(wlif->name));
-#endif
 
 	wl->monitor_dev = dev;
 	if (wl->monitor_type == 1)
@@ -3060,10 +3028,10 @@ _wl_add_monitor_if(wl_task_t *task)
 	else
 		dev->type = ARPHRD_IEEE80211_RADIOTAP;
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 17, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 14, 0)
 	bcopy(wl->dev->dev_addr, dev->dev_addr, ETHER_ADDR_LEN);
 #else
-	dev_addr_mod(dev, 0, wl->dev->dev_addr, ETHER_ADDR_LEN);
+	eth_hw_addr_set(dev, wl->dev->dev_addr);
 #endif
 
 #if defined(WL_USE_NETDEV_OPS)
@@ -3072,7 +3040,7 @@ _wl_add_monitor_if(wl_task_t *task)
 	dev->hard_start_xmit = wl_monitor_start;
 	dev->do_ioctl = wl_ioctl;
 	dev->get_stats = wl_get_stats;
-#endif
+#endif 
 
 	if (register_netdev(dev)) {
 		WL_ERROR(("wl%d: %s, register_netdev failed for %s\n",
@@ -3152,7 +3120,7 @@ print_tainted()
 {
 	return "";
 }
-#endif
+#endif 
 
 struct net_device *
 wl_netdev_get(wl_info_t *wl)
@@ -3182,7 +3150,7 @@ wl_buf_to_pktcopy(osl_t *osh, void *p, uchar *buf, int len, uint offset)
 	return len;
 }
 
-#if defined(WL_CONFIG_RFKILL)
+#if defined(WL_CONFIG_RFKILL)     
 
 static int
 wl_set_radio_block(void *data, bool blocked)
@@ -3263,7 +3231,7 @@ wl_report_radio_state(wl_info_t *wl)
 	rfkill_set_hw_state(wl->wl_rfkill.rfkill, wl->last_phyind != 0);
 }
 
-#endif
+#endif 
 
 static int
 wl_linux_watchdog(void *ctx)
@@ -3319,16 +3287,16 @@ wl_linux_watchdog(void *ctx)
 					wstats->discard.misc = WLCNTVAL(wl->pub->_cnt->rxrunt) +
 						WLCNTVAL(wl->pub->_cnt->rxgiant);
 					wstats->miss.beacon = 0;
-#endif
+#endif 
 				}
-#endif
+#endif 
 
 				wlif->stats_id = id;
 			}
 #ifdef USE_IW
 			if (!wlc_get(wl->wlc, WLC_GET_PHY_NOISE, &phy_noise))
 				wlif->phy_noise = phy_noise;
-#endif
+#endif 
 
 		}
 	}
@@ -3345,7 +3313,7 @@ wl_proc_read(char *buffer, char **start, off_t offset, int length, int *eof, voi
 static ssize_t
 wl_proc_read(struct file *filp, char __user *buffer, size_t length, loff_t *offp)
 {
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 17, 0))
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 17, 0)
 	wl_info_t * wl = PDE_DATA(file_inode(filp));
 #else
 	wl_info_t * wl = pde_data(file_inode(filp));
@@ -3361,8 +3329,8 @@ wl_proc_read(struct file *filp, char __user *buffer, size_t length, loff_t *offp
 		return 0;
 	}
 #else
-	if (*offp > 0) {
-		return 0;
+	if (*offp > 0) { 
+		return 0; 
 	}
 #endif
 
@@ -3406,7 +3374,7 @@ wl_proc_write(struct file *filp, const char *buff, unsigned long length, void *d
 static ssize_t
 wl_proc_write(struct file *filp, const char __user *buff, size_t length, loff_t *offp)
 {
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 17, 0))
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 17, 0)
 	wl_info_t * wl = PDE_DATA(file_inode(filp));
 #else
 	wl_info_t * wl = pde_data(file_inode(filp));
@@ -3444,17 +3412,18 @@ wl_proc_write(struct file *filp, const char __user *buff, size_t length, loff_t 
 }
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 6, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+static struct proc_ops wl_fops = {
+        .proc_read     = wl_proc_read,
+        .proc_write    = wl_proc_write,
+};
+#else
 static const struct file_operations wl_fops = {
 	.owner	= THIS_MODULE,
 	.read	= wl_proc_read,
 	.write	= wl_proc_write,
-#else
-static const struct proc_ops wl_fops = {
-	.proc_read	= wl_proc_read,
-	.proc_write	= wl_proc_write,
-#endif
 };
+#endif
 #endif
 
 static int
