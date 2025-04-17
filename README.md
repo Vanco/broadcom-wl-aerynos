@@ -26,7 +26,7 @@ The following kernel modules are incompatible with this driver and should not be
 Make sure to unload (`rmmod` command) and blacklist those modules in order to prevent them from being automatically
 reloaded during the next system startup:
 
-`/usr/lib/modprobe.d/50-broadcom-wl-blacklist.conf`
+`/etc/modprobe.d/50-broadcom-wl-blacklist.conf`
 ```
 # wireless drivers (conflict with Broadcom hybrid wireless driver 'wl')
 blacklist bcm43xx
@@ -40,7 +40,7 @@ blacklist brcmsmac
 
 ## Compile and install
 
-### Manually
+### Quick start
 
 Build on AerynOS: (2025.03) (Linux 6.13), The builder is `clang` and the linker is `ld.lld`:
 
@@ -53,7 +53,11 @@ $ modprobe wl
 
 ### Go from the begainning
 
-The source alreay pathed to 6.13. If you want to do from the begainning, falls this steps:
+The source alreay pathed to 6.13.
+
+#### 1) Prepare the source
+
+If you want to do from the begainning, prepare the source in steps:
 1. make new dir `mysrc` and `cd mysrc`
 2. untar the source `tar zxf base/broadcom-wl-6.30.223.271/hybrid-v35_64-nodebug-pcoem-6_30_223_271.tar.gz`
 3. patchs in the order of `broadcom-wl.spec`'s patch[xx]:
@@ -92,10 +96,75 @@ The source alreay pathed to 6.13. If you want to do from the begainning, falls t
 
    * `patch -p1 < base/broadcom-wl-6.30.223.271/patches/0001-Add-support-for-Linux-6.13.patch`
    * `patch -p1 < base/broadcom-wl-6.30.223.271/patches/0002-Add-support-for-Linux-6.14.patch`
-4. make the source `make CC=clang LD=ld.lld V=1`
-5. install the source `sudo make install`
-6. depmod -A
-7. modprobe wl
+
+#### 2) Prepare the install location
+
+As the AerynOS's `/usr` is totally controlled by the system, we need to install the driver to `/usr/local`,
+the `/usr/local` is link to `/var/local` in AerynOS.
+
+Set the `INSTALL_MOD_PATH` to `/usr/local` in `/etc/environment.d/10-external-mod.conf`, and patch in the `Makefile`:
+```sh
+patch -p1 < base/0001-install-to-INSTALL_MOD_PATH.patch
+```
+the final install location is `/usr/local/lib/modules/6.13.10-93.desktop/kernel/drivers/net/wireless/wl.ko`.
+
+#### 3) Build the driver
+
+The AerynOS use `clang` as the default compiler, and `ld.lld` as the linker.
+```sh
+$ make clean
+$ make CC=clang LD=ld.lld V=1
+```
+
+#### 4) Install the driver and configure the driver
+
+```sh
+$ sudo make install
+$ depmod -A -b /usr/local
+# try to load the module
+$ modprobe wl
+```
+Put imcompatible modules in the blacklist:
+
+`/etc/modprobe.d/50-wl.conf`
+```
+blacklist b43
+blacklist ssb
+blacklist cordic
+blacklist bcma
+# config wl use the /usr/local
+install wl /sbin/modprobe -d /usr/local -i wl
+```
+
+Now config automatically load module:
+```sh
+$ echo "wl" | sudo tee /etc/modules-load.d/wl.conf
+```
+
+#### 5) Check the driver
+```sh
+reboot
+```
+
+After reboot, check the driver:
+```sh
+$ modinfo -b /usr/local wl
+filename:       /usr/local/lib/modules/6.13.10-93.desktop/kernel/drivers/net/wireless/wl.ko
+license:        MIXED/Proprietary
+name:           wl
+depends:
+alias:          pci:v*d*sv*sd*bc02sc80i*
+vermagic:       6.13.10-93.desktop SMP preempt mod_unload
+retpoline:      Y
+parm:           intf_name:string
+parm:           nompc:int
+parm:           instance_base:int
+parm:           piomode:int
+parm:           oneonly:int
+parm:           wl_txq_thresh:int
+parm:           passivemode:int
+```
+
 
 ## See also
 

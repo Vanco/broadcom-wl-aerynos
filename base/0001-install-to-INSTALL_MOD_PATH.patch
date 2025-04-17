@@ -1,0 +1,45 @@
+From 86b425bdde0ff6d8a923aec51544150b3cc43949 Mon Sep 17 00:00:00 2001
+From: Vanco <van.fan@outlook.com>
+Date: Thu, 17 Apr 2025 10:54:46 +0800
+Subject: [PATCH] install to INSTALL_MOD_PATH
+
+---
+ Makefile | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index b78adf4..f547d51 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3,11 +3,11 @@
+ # Broadcom 802.11abg Networking Device Driver
+ #
+ # Copyright (C) 2015, Broadcom Corporation. All Rights Reserved.
+-# 
++#
+ # Permission to use, copy, modify, and/or distribute this software for any
+ # purpose with or without fee is hereby granted, provided that the above
+ # copyright notice and this permission notice appear in all copies.
+-# 
++#
+ # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+@@ -151,7 +151,7 @@ EXTRA_LDFLAGS      := $(src)/lib/wlc_hybrid.o_shipped
+ 
+ KBASE              ?= /lib/modules/`uname -r`
+ KBUILD_DIR         ?= $(KBASE)/build
+-MDEST_DIR          ?= $(KBASE)/kernel/drivers/net/wireless
++MDEST_DIR          ?= $(INSTALL_MOD_PATH)$(KBASE)/kernel/drivers/net/wireless
+ 
+ # Cross compile setup.  Tool chain and kernel tree, replace with your own.
+ CROSS_TOOLS        = /path/to/tools
+@@ -167,4 +167,4 @@ clean:
+ 	KBUILD_NOPEDANTIC=1 make -C $(KBUILD_DIR) M=`pwd` clean
+ 
+ install:
+-	install -D -m 755 wl.ko $(MDEST_DIR)
++	install -D -m 755 wl.ko $(MDEST_DIR)/wl.ko
+-- 
+2.47.1
+
