@@ -25,7 +25,10 @@ cp -r usr/src/broadcom-wl-6.30.223.271/wl.ko usr/lib/modules/$(uname -r)/kernel/
 # Package the built files:
 # Tar the files in usr/lib usr/share, exclude the source code
 
-tar -I zstd -cf ../broadcom-wl-`uname -r`.tar.zst --exclude=src -C usr .
+# Get linux version from uname -r in x.xx format
+version=$(uname -r | cut -d '.' -f 1-2)
+
+tar -I zstd -cf ../broadcom-wl-$version.tar.zst --exclude=src -C usr .
 # Check if the package was created successfully
 if [ $? -ne 0 ]; then
     echo "Failed to create the package."
