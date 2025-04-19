@@ -15,7 +15,7 @@ sudo moss install broadcom-wl
 
 ```sh
 # find the version from the archlinux repository before you going.
-$ sh fetch-source 6.30.223.271-42
+$ sh fetch-source.sh 6.30.223.271-42
 
 # auto build and package
 $ sh autobuild-package.sh
